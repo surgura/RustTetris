@@ -1,10 +1,13 @@
 use draw;
-use graphics;
 use opengl_graphics::GlGraphics;
 use graphics::{ Context, Transformed };
+use block;
+use update;
+use piston::UpdateArgs;
+use vector::V2f32;
 
 pub struct Grid {
-	pub data : [[bool;Self::width() as usize];Self::height() as usize]
+	pub data : [[Option<block::Block>;Self::width() as usize];Self::height() as usize]
 }
 
 impl Grid {
@@ -29,7 +32,7 @@ impl Grid {
     }
 
     pub const fn new() -> Grid {
-        return Grid{ data: [[false;Self::width() as usize];Self::height() as usize] }
+        return Grid{ data: [[None;Self::width() as usize];Self::height() as usize] }
     }
 }
 
@@ -37,19 +40,25 @@ impl draw::Draw for Grid {
     fn draw(&self, context: &Context, gl: &mut GlGraphics, scale: f32) {
         for y in 0..Self::height() {
             for x in 0..Self::width() {
-                let transform = context.transform;
-                let transform = transform.trans(
-                    (Self::cell_pixelsize() as f32 * scale * x as f32) as f64,
-                    (Self::cell_pixelsize() as f32 * scale * y as f32) as f64
-                );
-
-                let square = graphics::rectangle::square(0.0, 0.0, (Self::cell_pixelsize() as f32 * scale) as f64);
-
-                const BLUE: [f32; 4] = [0.0, 0.0, 1.0, 1.0];
-                if self.data[y as usize][x as usize] {
-                    graphics::rectangle(BLUE, square, transform, gl);
+                if let Some(block) = &self.data[y as usize][x as usize] {
+                    block.draw(context, gl, scale);
                 }
-                //graphics::line(color: types::Color, radius: types::Radius, line: L, transform: math::Matrix2d, g: &mut G)
+            }
+        }
+    }
+}
+
+impl update::Update for Grid {
+    fn update(&mut self, updateargs: &UpdateArgs) {
+        const INTERPOLATE_FACTOR: f32 = 0.5;
+        for y in 0..Self::height() {
+            for x in 0..Self::width() {
+                if let Some(block) = &mut self.data[y as usize][x as usize] {
+                    block.interpolate_towards(
+                        &V2f32::new(x as f32, y as f32),
+                        (INTERPOLATE_FACTOR as f64 * updateargs.dt) as f32
+                    )
+                }
             }
         }
     }
