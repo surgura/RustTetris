@@ -14,7 +14,9 @@ use opengl_graphics::{ GlGraphics, OpenGL };
 use draw::Draw;
 
 fn main() {
-    let game_grid = grid::Grid::new();
+    let scale: f32 = 1.0;
+    let mut game_grid = grid::Grid::new();
+    game_grid.data[2][2] = true;
 
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;
@@ -22,7 +24,10 @@ fn main() {
     // Create an Glutin window.
     let mut window: Window = WindowSettings::new(
         "Tetris",
-        [200, 200]
+        [
+            grid::Grid::pixelwidth() as u32,
+            grid::Grid::pixelheight() as u32
+        ]
     )
     .graphics_api(opengl)
     .exit_on_esc(true)
@@ -36,11 +41,11 @@ fn main() {
         if let Some(renderargs) = event.render_args() {
             gl.draw(renderargs.viewport(), |context, gl| {
                 // clear screen.
-                const GREEN: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
-                graphics::clear(GREEN, gl);
+                const BACKGROUND_COLOR: [f32; 4] = [0.0 / 255.0, 0.0 / 255.0, 0.0 / 255.0, 1.0];
+                graphics::clear(BACKGROUND_COLOR, gl);
 
                 // draw grid
-                game_grid.draw(&context, gl);
+                game_grid.draw(&context, gl, scale);
             });
         }
 
