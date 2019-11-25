@@ -24,6 +24,7 @@ fn main() {
     let scale: f32 = 1.0;
     let mut game_grid = grid::Grid::new();
     game_grid.data[2][2] = Some(block::Block::new(V2f32::new(64.0, 64.0), 32.0));
+    game_grid.data[2][2].as_mut().unwrap().set_goal_position(V2f32::new(32.0, 32.0), 2.0);
 
     // Change this to OpenGL::V2_1 if not working.
     let opengl = OpenGL::V3_2;

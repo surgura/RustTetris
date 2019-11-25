@@ -1,10 +1,9 @@
 use draw;
 use opengl_graphics::GlGraphics;
-use graphics::{ Context, Transformed };
+use graphics::{ Context };
 use block;
 use update;
 use piston::UpdateArgs;
-use vector::V2f32;
 
 pub struct Grid {
 	pub data : [[Option<block::Block>;Self::width() as usize];Self::height() as usize]
@@ -50,14 +49,10 @@ impl draw::Draw for Grid {
 
 impl update::Update for Grid {
     fn update(&mut self, updateargs: &UpdateArgs) {
-        const INTERPOLATE_FACTOR: f32 = 0.5;
         for y in 0..Self::height() {
             for x in 0..Self::width() {
                 if let Some(block) = &mut self.data[y as usize][x as usize] {
-                    block.interpolate_towards(
-                        &V2f32::new(x as f32, y as f32),
-                        (INTERPOLATE_FACTOR as f64 * updateargs.dt) as f32
-                    )
+                    block.update_interpolation(updateargs.dt);
                 }
             }
         }
