@@ -4,6 +4,7 @@ mod falling_block;
 mod vector;
 mod update;
 mod block;
+mod interpolate;
 extern crate piston;
 extern crate graphics;
 extern crate glutin_window;
@@ -63,8 +64,8 @@ fn main() {
         }
 
         if let Some(updateargs) = event.update_args() {
-            falling_block.update(&updateargs);
-            game_grid.update(&updateargs);
+            falling_block.update(updateargs.dt as f32);
+            game_grid.update(updateargs.dt as f32);
         }
     }
 }

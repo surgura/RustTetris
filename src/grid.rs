@@ -3,7 +3,6 @@ use opengl_graphics::GlGraphics;
 use graphics::{ Context };
 use block;
 use update;
-use piston::UpdateArgs;
 
 pub struct Grid {
 	pub data : [[Option<block::Block>;Self::width() as usize];Self::height() as usize]
@@ -48,11 +47,11 @@ impl draw::Draw for Grid {
 }
 
 impl update::Update for Grid {
-    fn update(&mut self, updateargs: &UpdateArgs) {
+    fn update(&mut self, dt: f32) {
         for y in 0..Self::height() {
             for x in 0..Self::width() {
                 if let Some(block) = &mut self.data[y as usize][x as usize] {
-                    block.update_interpolation(updateargs.dt);
+                    block.update_interpolation(dt);
                 }
             }
         }

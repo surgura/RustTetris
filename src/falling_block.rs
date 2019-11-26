@@ -4,7 +4,6 @@ use update::Update;
 use opengl_graphics::GlGraphics;
 use graphics::{ Context, Transformed };
 use grid::Grid;
-use piston::UpdateArgs;
 
 pub struct FallingBlock {
     shape: [[bool;Self::width() as usize];Self::height() as usize],
@@ -55,8 +54,8 @@ impl Draw for FallingBlock {
 }
 
 impl Update for FallingBlock {
-    fn update(&mut self, updateargs: &UpdateArgs) {
-        let speed: f32 = (1.0f64 * updateargs.dt) as f32;
+    fn update(&mut self, dt: f32) {
+        let speed: f32 = 1.0f32 * dt;
         self.position.y += speed;
     }
 }
